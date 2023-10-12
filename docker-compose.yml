@@ -15,7 +15,7 @@ services:
   shoe-go:
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.air
     container_name: shoeGo
     environment:
       DB_HOST: dpg-ckk087cl4vmc73bpc0ag-a.ohio-postgres.render.com
