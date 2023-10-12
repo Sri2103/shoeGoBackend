@@ -23,6 +23,7 @@ jobs:
       run: |
         ibmcloud login --apikey "${IBM_CLOUD_API_KEY}"
         ibmcloud cr region-set "${CR_REGION}"
+        ibmcloud target -g default
         ibmcloud cr login
       env:
         IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
