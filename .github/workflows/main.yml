@@ -12,25 +12,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4.1.0
 
-    - name: Set up the IBM Cloud CLI
-      # You may pin to the exact commit or the version.
-      # uses: dprosper/ic-setup-cli@5a5c220653d4dae444e2ea31242bb065fd48fd5d
-      uses: dprosper/ic-setup-cli@v0.1.2
-      with:
-        # IBM Cloud API key
-        API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
-        # IBM Cloud Region
-        REGION: ca-tor
-        # IBM Cloud resource group
-      # optional, default is default
-        # List of plugins to install and separated by a comma to get a full list of available 
-    # Visit the Reference section on the https://cloud.ibm.com/docs/cli documentation page.
-        INSTALL_PLUGINS: container-registry
-
+    - name: Install IBM Cloud CLI
+      run: |
+        curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+        ibmcloud --version
+        ibmcloud config --check-version=false
+        ibmcloud plugin install -f container-registry
+   
     - name: Login to IBM Cloud Private Registry
       run: |
+        ibmcloud login --apikey "${IBM_CLOUD_API_KEY}" -r "${CR_REGION}" -g default
+        ibmcloud cr region-set "${CR_REGION}"
         ibmcloud cr login
-        ibmcloud cr namespace-add <YOUR_NAMESPACE>
       env:
         IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
         CR_REGION: ca-tor
