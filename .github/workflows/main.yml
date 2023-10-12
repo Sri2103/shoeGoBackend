@@ -18,11 +18,11 @@ jobs:
       uses: dprosper/ic-setup-cli@v0.1.2
       with:
         # IBM Cloud API key
-        API_KEY:  ${{ secrets.IBM_CLOUD_API_KEY }}
+        API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
         # IBM Cloud Region
         REGION: ca-tor
         # IBM Cloud resource group
-        RESOURCE_GROUP: # optional, default is default
+      # optional, default is default
         # List of plugins to install and separated by a comma to get a full list of available 
     # Visit the Reference section on the https://cloud.ibm.com/docs/cli documentation page.
         INSTALL_PLUGINS: container-registry
