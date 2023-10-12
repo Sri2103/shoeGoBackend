@@ -21,7 +21,8 @@ jobs:
    
     - name: Login to IBM Cloud Private Registry
       run: |
-        ibmcloud login --apikey "${IBM_CLOUD_API_KEY}" -r "${IBM_CLOUD_REGION}" -g default
+        ibmcloud login --apikey "${IBM_CLOUD_API_KEY}" -r "${IBM_CLOUD_REGION}"
+        ibmcloud target -g default
         ibmcloud cr login
       env:
         IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
