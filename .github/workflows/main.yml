@@ -41,7 +41,7 @@ jobs:
         docker push $DOCKER_IMAGE_TAG
       env:
         CR_NAMESPACE: ns_1
-        DOCKER_IMAGE: shoego
+        DOCKER_IMAGE: harsha2103
 
     
   
