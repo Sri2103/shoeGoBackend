@@ -48,7 +48,7 @@ func main() {
 	}
 
 	go func() {
-		hcLogger.Info("Server starting on :", config.ServerPort)
+		hcLogger.Info("Server starting on", config.ServerPort)
 		if err := srv.ListenAndServe(); err != nil {
 			hcLogger.Error(err.Error())
 		}
