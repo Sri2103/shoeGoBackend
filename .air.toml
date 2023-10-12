@@ -1,0 +1,32 @@
+root = "."
+
+tmp_dir="tmp"
+
+[build]
+
+cmd = "go build -o ./tmp/main ./cmd/main"
+
+bin = "tmp/main"
+
+exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules"]
+
+delay = 1000 # ms
+
+stop_on_error = true
+
+poll=true
+
+[log]
+# Show log time
+time = false
+
+[color]
+# Customize each part's color. If no color found, use the raw app log.
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+# Delete tmp directory on exit
+clean_on_exit = true

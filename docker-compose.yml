@@ -1,0 +1,32 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my_postgres_dev
+    environment:
+      POSTGRES_USER: postgresUser
+      POSTGRES_PASSWORD: postgresPW
+      POSTGRES_DB: postgresDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  shoe-go:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: shoeGo
+    environment:
+      DB_HOST: dpg-ckk087cl4vmc73bpc0ag-a.ohio-postgres.render.com
+      DB_USER: shoego_user
+      DB_PASS: V6MN3FFOY1x42jIyz5Hu1SULdxNJLfbp
+      DB_NAME: shoego
+      ServerPort: 5000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/app
+
+volumes:
+  postgres_data:
