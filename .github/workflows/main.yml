@@ -35,7 +35,7 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        DOCKER_IMAGE_TAG=ca.icr.io/${CR_NAMESPACE}/${YOUR_DOCKER_IMAGE}:${{ steps.get_sha.outputs.SHA }}
+        DOCKER_IMAGE_TAG=ca.icr.io/$CR_NAMESPACE/$DOCKER_IMAGE:${{ steps.get_sha.outputs.SHA }}
         docker build -t $DOCKER_IMAGE_TAG .
         docker push $DOCKER_IMAGE_TAG
       env:
