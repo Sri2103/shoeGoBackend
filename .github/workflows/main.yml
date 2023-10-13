@@ -10,7 +10,7 @@ env:
   IBM_CLOUD_REGION: ca-tor
   ICR_NAMESPACE: ns_1
   REGISTRY_HOSTNAME: ca.icr.io
-  IMAGE_NAME: shoeGo
+  IMAGE_NAME: shoe_go
 
 jobs:
  deploy:
