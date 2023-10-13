@@ -26,7 +26,7 @@ jobs:
         ibmcloud --version
         ibmcloud config --check-version=false
         ibmcloud plugin install -f container-registry
-        ibmcloud plugins install -f 
+        
    
     - name: Login to IBM Cloud Private Registry
       run: |
