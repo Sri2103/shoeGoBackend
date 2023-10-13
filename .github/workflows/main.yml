@@ -4,6 +4,14 @@ on:
     branches:
     - master
 
+env:
+  GITHUB_SHA: ${{ github.sha }}
+  IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
+  IBM_CLOUD_REGION: ca-tor
+  ICR_NAMESPACE: ns_1
+  REGISTRY_HOSTNAME: ca.icr.io
+  IMAGE_NAME: shoeGo
+
 jobs:
  deploy:
    runs-on: ubuntu-latest
@@ -24,24 +32,22 @@ jobs:
         ibmcloud login --apikey "${IBM_CLOUD_API_KEY}" -r "${IBM_CLOUD_REGION}"
         ibmcloud target -g Default
         ibmcloud cr login
-      env:
-        IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
-        CR_REGION: ca-tor
-        CR_NAMESPACE: ns_1
 
     - name: Get Commit SHA
       id: get_sha
       run: echo "::set-output name=SHA::$(git rev-parse --short ${{ github.sha }})"
 
-    - name: Build and push Docker image
+     # Build the Docker image
+    - name: Build with Docker
       run: |
-        DOCKER_IMAGE_TAG=ca.icr.io/$CR_NAMESPACE/$DOCKER_IMAGE:${{ steps.get_sha.outputs.SHA }}
-        docker build -t $DOCKER_IMAGE_TAG .
-        ibmcloud cr login
-        docker push $DOCKER_IMAGE_TAG
-      env:
-        CR_NAMESPACE: ns_1
-        DOCKER_IMAGE: harsha2103
+        docker build -t "$REGISTRY_HOSTNAME"/"$ICR_NAMESPACE"/"$IMAGE_NAME":"$GITHUB_SHA" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" .
+
+    # Push the image to IBM Container Registry
+    - name: Push the image to ICR
+      run: |
+        docker push $REGISTRY_HOSTNAME/$ICR_NAMESPACE/$IMAGE_NAME:$GITHUB_SHA
 
     
   
