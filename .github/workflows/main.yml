@@ -26,6 +26,7 @@ jobs:
         ibmcloud --version
         ibmcloud config --check-version=false
         ibmcloud plugin install -f container-registry
+        ibmcloud plugins install -f 
    
     - name: Login to IBM Cloud Private Registry
       run: |
@@ -48,6 +49,12 @@ jobs:
     - name: Push the image to ICR
       run: |
         docker push $REGISTRY_HOSTNAME/$ICR_NAMESPACE/$IMAGE_NAME:$GITHUB_SHA
+
+    # Update code Engine application
+
+    # - name: Update code engine application
+    #   run: |
+    #     ibmcloud ce application update -n shoes-$GITHUB_REPOSITORY -k registry=$REGISTRY_HOSTNAME
 
     
   

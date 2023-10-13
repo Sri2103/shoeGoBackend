@@ -23,6 +23,10 @@ FROM alpine:3.14
 WORKDIR /app
 
 # Copy the binary from the build stage
+COPY --from=build /app/refresh-private.pem .
+COPY --from=build /app/refresh-public.pem .
+COPY --from=build /app/access-private.pem .
+COPY --from=build /app/access-public.pem .
 COPY --from=build /app/myapp .
 
 # Run the application
