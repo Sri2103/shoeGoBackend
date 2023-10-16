@@ -148,7 +148,7 @@ func (auth *AuthServiceImpl) ValidateAccessToken(tokenString string) (string, er
 				return nil, err
 			}
 
-			verifyKey, err := jwt.ParseECPublicKeyFromPEM(verifyBytes)
+			verifyKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
 
 			if err != nil {
 				auth.logger.Error("Could Not Parse Public Key From PEM")
@@ -182,15 +182,16 @@ func (auth *AuthServiceImpl) ValidateRefreshToken(tokenString string) (string, s
 				auth.logger.Error("Invalid signing method")
 				return nil, errors.New("unexpected signing method in authToken")
 			}
-
+			auth.logger.Info(auth.config.RefreshTokenPublicKeyPath,"key path")
 			verifyBytes, err := os.ReadFile(auth.config.RefreshTokenPublicKeyPath)
+			
 
 			if err != nil {
 				auth.logger.Error("unable to parse public key", err)
 				return nil, err
 			}
 
-			verifyToken, err := jwt.ParseEdPublicKeyFromPEM(verifyBytes)
+			verifyToken, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
 
 			if err != nil {
 				auth.logger.Error("Could Not Parse Public Key From PEM")

@@ -118,6 +118,8 @@ func (u *User) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		Data: struct {
 			AccessToken    string `json:"accessToken"`
 			ExpirationTime int64  `json:"expirationTime"`
-		}{accessToken, expirationTime.Unix()},
+		}{
+			AccessToken: accessToken, 
+			ExpirationTime: expirationTime.Unix()},
 	}, w)
 }

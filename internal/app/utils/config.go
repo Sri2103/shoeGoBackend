@@ -23,8 +23,8 @@ type Config struct {
 func NewConfig(logger hclog.Logger) *Config {
 	// viper.SetConfigFile(".env")
 	// viper.ReadInConfig()
-	viper.AutomaticEnv()
 
+	viper.AutomaticEnv()
 	viper.SetDefault("ServerPort", "5000")
 	viper.SetDefault("DB_HOST", "localhost")
 	viper.SetDefault("DB_Name", "postgresDB")
@@ -50,15 +50,15 @@ func NewConfig(logger hclog.Logger) *Config {
 		RefreshTokenPrivateKeyPath: viper.GetString("REFRESH_TOKEN_PRIVATE_KEY_PATH"),
 		RefreshTokenPublicKeyPath:  viper.GetString("REFRESH_TOKEN_PUBLIC_KEY_PATH"),
 		SSL_Mode:                   viper.GetString("SSL_Mode"),
-
 	}
 
-	logger.Debug("db host", config.DBHost)
-	logger.Debug("db name", config.DBName)
-	logger.Debug("db port", config.DBPort)
-	logger.Debug("db user", config.DBUser)
-	logger.Debug("ssl_mode",config.SSL_Mode)
-	logger.Debug("jwt expiration", config.JwtExpiration)
+	// logger.Debug("db host", config.DBHost)
+	// logger.Debug("db name", config.DBName)
+	// logger.Debug("db port", config.DBPort)
+	// logger.Debug("db user", config.DBUser)
+	// logger.Debug("ssl_mode", config.SSL_Mode)
+	// logger.Debug("jwt expiration", config.JwtExpiration)
+	// logger.Debug("path to accessToken pem", config.AccessTokenPublicKeyPath)
 
 	return config
 }
