@@ -2,6 +2,7 @@ package userService
 
 import (
 	"errors"
+	"time"
 
 	"github.com/hashicorp/go-hclog"
 	authService "github.com/sri2103/shoeMart/internal/app/auth/service"
@@ -54,25 +55,25 @@ func (u *UserServiceImpl) AddUser(user *userModel.User) (*userModel.User, error)
 	return userCreated, nil
 }
 
-func (u *UserServiceImpl) ValidateLogIn(reqUser *userModel.User) (*userModel.User, string, string, error) {
+func (u *UserServiceImpl) ValidateLogIn(reqUser *userModel.User) (*userModel.User, string, string, time.Time, error) {
 	user, err := u.userRepo.FindUser(reqUser.Email)
 
 	if err != nil {
 		u.logger.Error("Unable to find the user with email ", "Email:", reqUser.Email, ", error:", err)
-		return nil, "", "", err
+		return nil, "", "", time.Time{}, err
 	}
 
 	if valid := u.auth.Authenticate(user, reqUser); !valid {
 		u.logger.Error("Passwords does not match")
-		return nil, "", "", errors.New("passwords does not match")
+		return nil, "", "",time.Time{}, errors.New("passwords does not match")
 
 	}
 
-	accessToken, err := u.auth.GenerateAccessToken(user)
+	accessToken, expirationTime, err := u.auth.GenerateAccessToken(user)
 
 	if err != nil {
 		u.logger.Error("Unable to generate access token")
-		return nil, "", "", err
+		return nil, "", "", time.Time{}, err
 
 	}
 
@@ -80,10 +81,10 @@ func (u *UserServiceImpl) ValidateLogIn(reqUser *userModel.User) (*userModel.Use
 
 	if err != nil {
 		u.logger.Error("Unable to generate refresh token")
-		return nil, "", "", err
+		return nil, "", "", time.Time{}, err
 	}
 
-	return user, accessToken, refreshToken, nil
+	return user, accessToken, refreshToken, expirationTime,nil
 }
 
 func (u *UserServiceImpl) ValidateAccessToken(token string) (string, error) {
@@ -100,4 +101,8 @@ func (u *UserServiceImpl) GetUserById(userId string) (*userModel.User, error) {
 
 func (u *UserServiceImpl) GenerateCustomKey(userId string, tokenHash string) string {
 	return u.auth.GenerateCustomKey(userId, tokenHash)
+}
+
+func (u *UserServiceImpl) GenerateAccessToken(user *userModel.User) (string, time.Time, error) {
+	return u.auth.GenerateAccessToken(user)
 }

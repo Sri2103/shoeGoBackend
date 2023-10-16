@@ -11,22 +11,26 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - shoe_go_next
 
   shoe-go:
     build:
       context: ./
       dockerfile: Dockerfile.air
     container_name: shoeGo
-    environment:
-      DB_HOST: dpg-ckk087cl4vmc73bpc0ag-a.ohio-postgres.render.com
-      DB_USER: shoego_user
-      DB_PASS: V6MN3FFOY1x42jIyz5Hu1SULdxNJLfbp
-      DB_NAME: shoego
-      ServerPort: 5000
+    env_file: ./.env.docker
     ports:
       - "5000:5000"
     volumes:
       - ./:/app
+    networks:
+      - shoe_go_next
 
 volumes:
   postgres_data:
+
+networks:
+  shoe_go_next:
+    external: true
+      

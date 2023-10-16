@@ -66,7 +66,7 @@ func (u *User) LogIn(w http.ResponseWriter, r *http.Request) {
 
 	reqUser := r.Context().Value(UserKey{}).(userModel.User)
 
-	user, accessToken, refreshToken, err := u.userService.ValidateLogIn(&reqUser)
+	user, accessToken, refreshToken, expirationTime, err := u.userService.ValidateLogIn(&reqUser)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -76,7 +76,7 @@ func (u *User) LogIn(w http.ResponseWriter, r *http.Request) {
 		}, w)
 		return
 	}
-
+	time := expirationTime.Unix()
 	u.logger.Debug("User logged in successfully")
 	w.WriteHeader(http.StatusAccepted)
 	utils.ToJson(&utils.GenericResponse{
@@ -84,11 +84,40 @@ func (u *User) LogIn(w http.ResponseWriter, r *http.Request) {
 		Message: "Logged in",
 		Data: struct {
 			ID           string `json:"id"`
-			AccessToken  string  `json:"accessToken"`
-			RefreshToken string  `json:"refreshToken"`
-			Username     string  `json:"username"`
-			Email        string  `json:"email"`
-		}{user.ID, accessToken, refreshToken, user.Username, user.Email},
+			AccessToken  string `json:"accessToken"`
+			RefreshToken string `json:"refreshToken"`
+			Username     string `json:"username"`
+			Email        string `json:"email"`
+			Time         int64  `json:"accessExpiry"`
+		}{user.ID, accessToken, refreshToken, user.Username, user.Email, time},
 	}, w)
 
+}
+
+func (u *User) RefreshToken(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	user := r.Context().Value(UserKey{}).(userModel.User)
+	accessToken, expirationTime, err := u.userService.GenerateAccessToken(&user)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		u.logger.Error("unable to generate accessToken", err)
+		utils.ToJson(&utils.GenericResponse{
+			Success: false,
+			Message: "Unable to generate token",
+		}, w)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	utils.ToJson(&utils.GenericResponse{
+		Success: true,
+		Message: "token generated",
+		Data: struct {
+			AccessToken    string `json:"accessToken"`
+			ExpirationTime int64  `json:"expirationTime"`
+		}{accessToken, expirationTime.Unix()},
+	}, w)
 }

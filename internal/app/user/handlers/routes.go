@@ -16,9 +16,12 @@ func SetupUserRoutes(userRepo userRepository.UserRepo, router *mux.Router, confi
 	userService := userService.NewUserService(logger, userRepo, auth)
 	userHandler := NewUser(userService, logger, config,validation)
 
-	authRouter := router.Methods(http.MethodPost).Subrouter()
-	authRouter.Use(userHandler.MiddlewareValidateUser)
-	authRouter.HandleFunc("/signin", userHandler.SignIn)
-	authRouter.HandleFunc("/login", userHandler.LogIn)
+	registrationRouter := router.Methods(http.MethodPost).Subrouter()
+	registrationRouter.Use(userHandler.MiddlewareValidateUser)
+	registrationRouter.HandleFunc("/signin", userHandler.SignIn)
+	registrationRouter.HandleFunc("/login", userHandler.LogIn)
 
+	authRouter := router.PathPrefix("/refresh-token").Subrouter()
+    authRouter.Use(userHandler.MiddlewareValidateRefreshToken)
+	authRouter.HandleFunc("", userHandler.RefreshToken)
 }

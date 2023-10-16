@@ -56,7 +56,7 @@ jobs:
     #   run: |
     #     ibmcloud ce application update -n shoes-$GITHUB_REPOSITORY -k registry=$REGISTRY_HOSTNAME
 
-    
+
   
   
     

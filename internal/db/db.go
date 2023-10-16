@@ -12,10 +12,13 @@ import (
 var db *gorm.DB
 
 func ConnectToDB(config *utils.Config) (*gorm.DB, error) {
-	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=require", config.DBHost,config.DBUser,config.DBPass,config.DBName)
+	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=%s", config.DBHost,config.DBUser,config.DBPass,config.DBName,config.SSL_Mode)
 	// dsn := "host=postgres user=postgresUser password=postgresPW dbname=postgresDB port=5432 sslmode=disable"
 	// dsn := "host=localhost user=postgresUser password=postgresPW dbname=postgresDB port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
+	fmt.Println(connString,"connection string")
+	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{
+		// DisableForeignKeyConstraintWhenMigrating: true,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -29,11 +32,9 @@ func GetDB() *gorm.DB {
 // MigrateModels runs the auto-migration for the models.
 func MigrateModels(db *gorm.DB) error {
 	return db.AutoMigrate(
-		&postgresModels.Product{},
 		&postgresModels.User{},
+		&postgresModels.Product{},
 		&postgresModels.Cart{},
 		&postgresModels.CartItem{},
-
-
 	)
 }

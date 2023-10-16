@@ -21,7 +21,7 @@ type Cart struct {
 	ID     uuid.UUID `gorm:"primaryKey"`
 	UserID uuid.UUID
 	Status bool
-	User   User
+	User   User  
 }
 
 type CartAggregate struct {

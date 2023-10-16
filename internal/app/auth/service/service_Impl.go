@@ -60,7 +60,7 @@ func (auth *AuthServiceImpl) GenerateCustomKey(userId string, tokenHash string) 
 	return sha
 }
 
-func (auth *AuthServiceImpl) GenerateAccessToken(user *userModel.User) (string, error) {
+func (auth *AuthServiceImpl) GenerateAccessToken(user *userModel.User) (string, time.Time,error) {
 	userId := user.ID
 	tokenType := "access"
 
@@ -69,7 +69,7 @@ func (auth *AuthServiceImpl) GenerateAccessToken(user *userModel.User) (string, 
 
 	if err != nil {
 		auth.logger.Error("unable to read privatekey", err)
-		return "", errors.New("could not generate access token. please try again later")
+		return "", time.Time{}, errors.New("could not generate access token. please try again later")
 	}
 
 	// Parse key to RSA format
@@ -77,15 +77,16 @@ func (auth *AuthServiceImpl) GenerateAccessToken(user *userModel.User) (string, 
 
 	if err != nil {
 		auth.logger.Error("unable to parse private key", "error", err)
-		return "", errors.New("could not generate access token. please try again later")
+		return "", time.Time{}, errors.New("could not generate access token. please try again later")
 	}
 
+	expirationTime := time.Now().Add(time.Minute * time.Duration(auth.config.JwtExpiration))
 	// Set claims to add to JWT
 	claims := AccessTokenCustomClaims{
 		userId,
 		tokenType,
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * time.Duration(auth.config.JwtExpiration))),
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			Issuer:    "shoeGo.auth.service",
 		},
 	}
@@ -93,9 +94,12 @@ func (auth *AuthServiceImpl) GenerateAccessToken(user *userModel.User) (string, 
 	// generate token from attached token
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 
-	return token.SignedString(signKey)
+	key,err := token.SignedString(signKey)
+
+	return  key,expirationTime, err
 
 }
+
 
 func (auth *AuthServiceImpl) GenerateRefreshToken(user *userModel.User) (string, error) {
 

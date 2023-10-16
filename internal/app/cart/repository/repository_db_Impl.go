@@ -62,14 +62,14 @@ func (r *CartRepositoryImpl) FetchCart(userId string) (*cartModel.Cart, error) {
 		r.logger.Error("Parsing to uuid", "error", err)
 		return nil, err
 	}
-	err = r.db.First(&cart, "user_id=?", uid).Error
+	err = r.db.First(cart, "user_id=?", uid).Error
 	if err != nil {
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			cart.ID = uuid.New()
 			cart.UserID = uid
 
-			err = r.db.Create(&cart).Error
+			err = r.db.Create(cart).Error
 			if err != nil {
 				r.logger.Error("could not create new cart", "error", err)
 				return nil, err
@@ -80,7 +80,6 @@ func (r *CartRepositoryImpl) FetchCart(userId string) (*cartModel.Cart, error) {
 		}
 
 	}
-
 	var cartItems []*postgresModels.CartItem
 
 	err = r.db.Preload("Product").Where("cart_id=?", cart.ID).Find(&cartItems).Error
@@ -102,7 +101,7 @@ func (r *CartRepositoryImpl) FetchCart(userId string) (*cartModel.Cart, error) {
 func (r *CartRepositoryImpl) UpdateCart(cartId string, cartItem *cartModel.CartItem) error {
 	var Item = new(postgresModels.CartItem)
 
-	err := r.db.First(&Item, "cart_id = ? AND product_id = ?", cartId, cartItem.ProductID).Error
+	err := r.db.First(Item, "cart_id = ? AND product_id = ?", cartId, cartItem.ProductID).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			Item.ID = uuid.New()
