@@ -142,3 +142,30 @@ func (cart *Cart) UpdateCart(w http.ResponseWriter, r *http.Request) {
 		// Data:    bod,
 	}, w)
 }
+
+func (cart *Cart) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	values := r.URL.Query()
+	cartId := values["cartId"][0]
+	cartItemId := values["cartItemId"][0]
+	err := cart.cartService.DeleteCartItem(cartId, cartItemId)
+
+	if err != nil {
+		cart.logger.Error("[DeleteCartItem] Error while deleting item from cart: ", err)
+		w.WriteHeader(500)
+
+		utils.ToJson(&utils.GenericResponse{
+			Success: false,
+			Message: "Could not delete the item from cart.",
+		}, w)
+		return
+	}
+
+	w.WriteHeader(200)
+	utils.ToJson(&utils.GenericResponse{
+		Success: true,
+		Message: "Item deleted successfully from cart.",
+	}, w)
+
+}

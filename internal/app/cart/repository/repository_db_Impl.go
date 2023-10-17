@@ -134,3 +134,10 @@ func (r *CartRepositoryImpl) UpdateCart(cartId string, cartItem *cartModel.CartI
 
 	return nil
 }
+
+func (r *CartRepositoryImpl) DeleteCartItem(cartId string, cartItemId string) error {
+	item := postgresModels.CartItem{}
+	result := r.db.Delete(&item, "cart_id = ? and id = ?", cartId, cartItemId)
+
+	return result.Error
+}

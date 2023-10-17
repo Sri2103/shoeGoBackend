@@ -39,11 +39,19 @@ func (service *CartServiceImpl) FetchCart(userId string) (*cartModel.Cart, error
 	return c, nil
 }
 
-func (service *CartServiceImpl) UpdateCart(cartId string,cartItem *cartModel.CartItem) (error) {
-	 err := service.cartRepository.UpdateCart(cartId,cartItem)
+func (service *CartServiceImpl) UpdateCart(cartId string, cartItem *cartModel.CartItem) error {
+	err := service.cartRepository.UpdateCart(cartId, cartItem)
 	if err != nil {
 		service.logger.Error("error updating cart in repo", err)
 		return err
 	}
 	return nil
+}
+
+func (service *CartServiceImpl) DeleteCartItem(cartId string, cartItemId string) error {
+	err := service.cartRepository.DeleteCartItem(cartId, cartItemId)
+	if err != nil {
+		service.logger.Error("error deleting item from cart", err)
+	}
+	return err
 }

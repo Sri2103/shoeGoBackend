@@ -33,12 +33,12 @@ func main() {
 
 	// logging := log.New(os.Stdout, "", log.LstdFlags)
 	r := SetUp(config, hcLogger, validator)
-	headersOk := gohandlers.AllowedHeaders([]string{"X-Requested-With"})
+	// headersOk := gohandlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := gohandlers.AllowedOrigins([]string{"*"})
-	methodsOk := gohandlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	methodsOk := gohandlers.AllowedMethods([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodOptions,http.MethodDelete})
 	m := gohandlers.LoggingHandler(os.Stdout, r)
 
-	ch := gohandlers.CORS(originsOk, headersOk, methodsOk)
+	ch := gohandlers.CORS(originsOk, methodsOk)
 	srv := &http.Server{
 		Handler:      ch(m),
 		Addr:        fmt.Sprintf(":%s", config.ServerPort),

@@ -16,9 +16,10 @@ func SetupCartRoutes(cartRepo cartRepo.CartRepository, router *mux.Router, confi
 	cartHandlers := NewCart(cartService, logger, config, validation)
 
 	cartRouter := router.PathPrefix("/cart").Subrouter()
-	cartRouter.HandleFunc("/temp",cartHandlers.TemporaryFunc).Methods(http.MethodGet)
+	cartRouter.HandleFunc("/temp", cartHandlers.TemporaryFunc).Methods(http.MethodGet)
 	cartRouter.HandleFunc("/add", cartHandlers.AddToCart).Methods(http.MethodPost)
 	cartRouter.HandleFunc("/get/{userId}", cartHandlers.FetchCart).Methods(http.MethodGet)
-	cartRouter.HandleFunc("/update",cartHandlers.UpdateCart).Methods(http.MethodPost)
+	cartRouter.HandleFunc("/update", cartHandlers.UpdateCart).Methods(http.MethodPost)
+	cartRouter.HandleFunc("/delete", cartHandlers.DeleteCartItem).Methods(http.MethodDelete)
 
 }
